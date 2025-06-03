@@ -1,21 +1,79 @@
 import type { ModuleInstance } from './main.js'
+import { CompanionActionEvent } from '@companion-module/base'
 
 export function UpdateActions(self: ModuleInstance): void {
 	self.setActionDefinitions({
-		sample_action: {
-			name: 'My First Action',
+		toggle_component: {
+			name: 'Toggle component',
 			options: [
+				{
+					id: 'component',
+					type: 'dropdown',
+					label: 'Select component',
+					choices: [
+						{ id: 'status', label: 'Status' },
+						{ id: 'batter', label: 'Batter' },
+						{ id: 'lowerThird', label: 'Lower Third' },
+						{ id: 'boxScore', label: 'Box Score' },
+						{ id: 'intro', label: 'Intro' },
+						{ id: 'awayLineup', label: 'Away Lineup' },
+						{ id: 'homeLineup', label: 'Home Lineup' },
+						{ id: 'awayDefence', label: 'Away Defence' },
+						{ id: 'homeDefence', label: 'Home Defence' },
+						{ id: 'customTable', label: 'Custom Table' },
+					],
+					default: 'status',
+				},
+			],
+			callback: async (event: CompanionActionEvent): Promise<void> => {
+				try {
+					const component: string = event.options.component ? event.options.component.toString() : 'status'
+					const result = await self.apiService.toggleComponent(component)
+					self.checkFeedbacks('componentState')
+					self.log('debug', `Toggle component result: ${JSON.stringify(result)}`)
+				} catch (error: any) {
+					self.log('error', `Error toggling component: ${error?.message}`)
+				}
+			},
+		},
+		select_from_lineup: {
+			name: 'Select from lineup',
+			options: [
+				{
+					id: 'team',
+					type: 'dropdown',
+					label: 'Select team',
+					choices: [
+						{ id: 'awayLineup', label: 'Away' },
+						{ id: 'homeLineup', label: 'Home' },
+					],
+					default: 'away',
+				},
 				{
 					id: 'num',
 					type: 'number',
 					label: 'Test',
-					default: 5,
-					min: 0,
-					max: 100,
+					default: 1,
+					min: 1,
+					max: 9,
 				},
 			],
-			callback: async (event) => {
-				console.log('Hello world!', event.options.num)
+			callback: async (event: CompanionActionEvent): Promise<void> => {
+				try {
+					const team: string = event.options.team ? event.options.team.toString() : 'awayLineup'
+					const num: number = event.options.num ? Number(event.options.num) : 1
+					let guid: string | undefined
+					if (team === 'awayLineup') {
+						guid = self.data.awayLineup[num - 1].guid
+					} else {
+						guid = self.data.homeLineup[num - 1].guid
+					}
+					await self.apiService.selectLowerThird(guid)
+					self.data = await self.apiService.getCompanionData()
+					self.checkFeedbacks('playerState')
+				} catch (error: any) {
+					self.log('error', `Error selecting from lineup: ${error?.message}`)
+				}
 			},
 		},
 	})

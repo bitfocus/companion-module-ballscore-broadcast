@@ -1,27 +1,32 @@
-import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
+import { type SomeCompanionConfigField } from '@companion-module/base'
 
 export interface ModuleConfig {
-	host: string
-	port: number
+	secretKey: string
+	environment: string
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
 	return [
 		{
+			id: 'secretKey',
 			type: 'textinput',
-			id: 'host',
-			label: 'Target IP',
+			label: 'Secret Key',
 			width: 8,
-			regex: Regex.IP,
+			regex: '^[\\w]{20}$',
+			required: true,
 		},
 		{
-			type: 'number',
-			id: 'port',
-			label: 'Target Port',
-			width: 4,
-			min: 1,
-			max: 65535,
-			default: 8000,
+			id: 'environment',
+			type: 'dropdown',
+			label: 'Environment',
+			width: 8,
+			choices: [
+				{ id: 'prod', label: 'Production' },
+				{ id: 'test', label: 'Test' },
+				{ id: 'dev', label: 'Development' },
+				{ id: 'local', label: 'Local' },
+			],
+			default: 'prod',
 		},
 	]
 }
