@@ -4,6 +4,7 @@ import { updateLineupVariables, UpdateVariableDefinitions } from './variables.js
 import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
+import { UpdatePresetDefinitions } from './presets.js'
 import { ApiService, BroadcastCompanionData } from './api-service.js'
 
 export class ModuleInstance extends InstanceBase<ModuleConfig> {
@@ -64,6 +65,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
+		UpdatePresetDefinitions(this) // export preset definitions
 	}
 	// When module gets deleted
 	async destroy(): Promise<void> {
@@ -83,6 +85,9 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 			this.broadcastTimer = null
 		}
 		await this.connectToBroadcast(config)
+
+		// Refresh presets when config is updated
+		UpdatePresetDefinitions(this)
 	}
 
 	// Return config fields for web config
