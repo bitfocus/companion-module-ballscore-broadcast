@@ -1,5 +1,6 @@
 import { ModuleConfig } from './config.js'
 import axios from 'axios'
+import * as console from 'node:console'
 
 export class ApiService {
 	private readonly secretKey: string
@@ -14,6 +15,7 @@ export class ApiService {
 	}
 
 	constructor(config: ModuleConfig) {
+		console.log('initalizing ApiService with config', config)
 		this.secretKey = config.secretKey
 		switch (config.environment) {
 			case 'prod':
@@ -46,17 +48,18 @@ export class ApiService {
 	async toggleComponent(component?: string): Promise<void> {
 		if (!component) throw new Error('No component provided')
 		const url = `${this.baseUrl}/controls/${component}/toggle`
-		await axios.put<void>(url, { headers: this.httpHeader })
+		await axios.put<void>(url, {}, { headers: this.httpHeader })
 	}
 
 	async selectLowerThird(playerGuid?: string): Promise<void> {
 		if (!playerGuid) throw new Error('No playerGuid provided')
 		const url = `${this.baseUrl}/lower-third/${playerGuid}`
-		await axios.put<void>(url, { headers: this.httpHeader })
+		await axios.put<void>(url, {}, { headers: this.httpHeader })
 	}
 
 	async getCompanionData(): Promise<BroadcastCompanionData> {
 		const url = `${this.baseUrl}/companion`
+		console.log('gettingCompanionData', url, this.httpHeader)
 		const response = await axios.get<BroadcastCompanionData>(url, { headers: this.httpHeader })
 		return response.data
 	}

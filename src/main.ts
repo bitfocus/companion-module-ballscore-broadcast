@@ -41,6 +41,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	}
 
 	private async connectToBroadcast(config: ModuleConfig): Promise<void> {
+		this.log('debug', 'connectingToBroadcast')
 		this.updateStatus(InstanceStatus.Connecting)
 		this.apiService = new ApiService(config)
 		return this.apiService

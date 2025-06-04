@@ -1,16 +1,16 @@
 {
 	"id": "ballscore-broadcast",
-	"name": "ballscore-broadcast",
-	"shortname": "module-shortname",
-	"description": "A short one line description of your module",
-	"version": "0.0.0",
+	"name": "Ball Score Broadcast",
+	"shortname": "Ball Score",
+	"description": "Ball Score remote for controling CG broadcast components",
+	"version": "0.1.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-ballscore-broadcast.git",
 	"bugs": "https://github.com/bitfocus/companion-module-ballscore-broadcast/issues",
 	"maintainers": [
 		{
-			"name": "Your name",
-			"email": "Your email"
+			"name": "Lubomír Čuhel",
+			"email": "cuhel@ballscore.app"
 		}
 	],
 	"runtime": {
@@ -20,7 +20,7 @@
 		"entrypoint": "../dist/main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": "Your company",
-	"products": ["Your product"],
+	"manufacturer": "Ball Score",
+	"products": ["Broadcast"],
 	"keywords": []
 }
