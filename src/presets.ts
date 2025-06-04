@@ -8,6 +8,9 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 
 	//component presets
 	self.data.controls.forEach((control: Control) => {
+		//dont add following components to presets
+		if (control.component === 'poweredBy') return
+
 		presets[`toggle_${control.component}`] = {
 			type: 'button',
 			category: 'Components',
