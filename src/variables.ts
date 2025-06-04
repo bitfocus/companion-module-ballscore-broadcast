@@ -1,6 +1,5 @@
 import type { ModuleInstance } from './main.js'
-import { BroadcastCompanionData } from './api-service.js'
-import type { CompanionVariableValues } from '@companion-module/base/dist/module-api/variable.js'
+import type { CompanionVariableValues } from '@companion-module/base'
 
 export function UpdateVariableDefinitions(self: ModuleInstance): void {
 	self.setVariableDefinitions([
@@ -46,13 +45,13 @@ export function UpdateVariableDefinitions(self: ModuleInstance): void {
 	])
 }
 
-export function updateLineupVariables(self: ModuleInstance, data: BroadcastCompanionData): void {
+export function updateLineupVariables(self: ModuleInstance): void {
 	const updates: CompanionVariableValues = {}
-	data.awayLineup.forEach((player, index) => {
+	self.data.awayLineup.forEach((player, index) => {
 		updates[`awayLineupNumber${index + 1}`] = player.number
 		updates[`awayLineupName${index + 1}`] = player.name
 	})
-	data.homeLineup.forEach((player, index) => {
+	self.data.homeLineup.forEach((player, index) => {
 		updates[`homeLineupNumber${index + 1}`] = player.number
 		updates[`homeLineupName${index + 1}`] = player.name
 	})

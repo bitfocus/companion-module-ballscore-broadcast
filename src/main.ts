@@ -1,6 +1,6 @@
 import { InstanceBase, InstanceStatus, runEntrypoint, SomeCompanionConfigField } from '@companion-module/base'
 import { GetConfigFields, type ModuleConfig } from './config.js'
-import { UpdateVariableDefinitions } from './variables.js'
+import { updateLineupVariables, UpdateVariableDefinitions } from './variables.js'
 import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
@@ -10,31 +10,52 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	config!: ModuleConfig // Setup in init()
 	apiService!: ApiService
 	data!: BroadcastCompanionData
+	broadcastTimer!: NodeJS.Timeout | null
 
 	constructor(internal: unknown) {
 		super(internal)
 	}
 
-	private connectToBroadcast(config: ModuleConfig): void {
+	private subscribeToBroadcast(): NodeJS.Timeout {
+		// Clear any existing timer
+		if (this.broadcastTimer) {
+			clearInterval(this.broadcastTimer)
+		}
+
+		// Set up a new timer that calls getCompanionData every second
+		this.broadcastTimer = setInterval(async () => {
+			try {
+				this.data = await this.apiService.getCompanionData()
+				this.checkFeedbacks('batterState', 'playerState')
+				updateLineupVariables(this)
+			} catch (error: any) {
+				this.log('error', `Error getting companion data: ${error.message}`)
+			}
+		}, 4000)
+
+		// Return the timer so it can be canceled if needed
+		return this.broadcastTimer
+	}
+
+	private async connectToBroadcast(config: ModuleConfig): Promise<void> {
 		this.updateStatus(InstanceStatus.Connecting)
 		this.apiService = new ApiService(config)
-		this.apiService
+		return this.apiService
 			.getCompanionData()
 			.then((data) => {
 				this.data = data
 				this.updateStatus(InstanceStatus.Ok)
+				this.subscribeToBroadcast()
 			})
 			.catch((error) => {
 				this.updateStatus(InstanceStatus.UnknownError, error.message)
 			})
-
-		this.updateStatus(InstanceStatus.Ok)
 	}
 
 	async init(config: ModuleConfig): Promise<void> {
 		this.config = config
 
-		this.connectToBroadcast(config)
+		await this.connectToBroadcast(config)
 
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
@@ -43,11 +64,21 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	// When module gets deleted
 	async destroy(): Promise<void> {
 		this.log('debug', 'destroy')
+		// Clean up the timer when the module is destroyed
+		if (this.broadcastTimer) {
+			clearInterval(this.broadcastTimer)
+			this.broadcastTimer = null
+		}
 	}
 
 	async configUpdated(config: ModuleConfig): Promise<void> {
 		this.config = config
-		this.connectToBroadcast(config)
+		// Clear any existing timer when config is updated
+		if (this.broadcastTimer) {
+			clearInterval(this.broadcastTimer)
+			this.broadcastTimer = null
+		}
+		await this.connectToBroadcast(config)
 	}
 
 	// Return config fields for web config
