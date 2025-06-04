@@ -23,14 +23,17 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 		}
 
 		// Set up a new timer that calls getCompanionData every second
-		this.broadcastTimer = setInterval(async () => {
-			try {
-				this.data = await this.apiService.getCompanionData()
-				this.checkFeedbacks('batterState', 'playerState')
-				updateLineupVariables(this)
-			} catch (error: any) {
-				this.log('error', `Error getting companion data: ${error.message}`)
-			}
+		this.broadcastTimer = setInterval(() => {
+			this.apiService
+				.getCompanionData()
+				.then((data: BroadcastCompanionData) => {
+					this.data = data
+					this.checkFeedbacks('batterState', 'playerState')
+					updateLineupVariables(this)
+				})
+				.catch((error: any) => {
+					this.log('error', `Error getting companion data: ${error?.message}`)
+				})
 		}, 4000)
 
 		// Return the timer so it can be canceled if needed
