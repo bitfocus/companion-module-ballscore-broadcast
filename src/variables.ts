@@ -13,11 +13,26 @@ export function UpdateVariableDefinitions(self: ModuleInstance): void {
 		variables.push({ variableId: `homeLineupName${i}`, name: `Home Lineup Name ${i}` })
 		variables.push({ variableId: `homeLineupLabel${i}`, name: `Away Lineup Button Label ${i}` })
 	}
+	variables.push({ variableId: 'awayPitcherNumber', name: 'Away pitcher number' })
+	variables.push({ variableId: 'awayPitcherName', name: 'Away pitcher name' })
+	variables.push({ variableId: 'awayPitcherLabel', name: 'Away pitcher Button Label' })
+	variables.push({ variableId: 'homePitcherNumber', name: 'Home pitcher number' })
+	variables.push({ variableId: 'homePitcherName', name: 'Home pitcher name' })
+	variables.push({ variableId: 'homePitcherLabel', name: 'Home pitcher Button Label' })
 	self.setVariableDefinitions(variables)
 }
 
-export function updateLineupVariables(self: ModuleInstance): void {
+export function updateLineupAndPitchersVariables(self: ModuleInstance): void {
 	const updates: CompanionVariableValues = {}
+	//clear values
+	for (let i = 1; i <= 9; i++) {
+		updates[`awayLineupNumber${i}`] = ''
+		updates[`awayLineupName${i}`] = ''
+		updates[`awayLineupLabel${i}`] = `${i}.\nunknown`
+		updates[`homeLineupNumber${i}`] = ''
+		updates[`homeLineupName${i}`] = ''
+		updates[`homeLineupLabel${i}`] = `${i}.\nunknown`
+	}
 	self.data.awayLineup.forEach((player, index) => {
 		updates[`awayLineupNumber${index + 1}`] = player.number
 		updates[`awayLineupName${index + 1}`] = player.name
@@ -38,5 +53,27 @@ export function updateLineupVariables(self: ModuleInstance): void {
 			updates[`homeLineupLabel${index + 1}`] = `${index + 1}.\n${player.name.toUpperCase()}`
 		}
 	})
+
+	updates['awayPitcherNumber'] = self.data.awayPitcher?.number
+	updates['awayPitcherName'] = self.data.awayPitcher?.name
+	updates['awayPitcherLabel'] = 'P:\nunknown'
+	if (self.data.awayPitcher?.name) {
+		updates['awayPitcherLabel'] = `P:\n${self.data.awayPitcher?.name.toUpperCase()}`
+	}
+	if (self.data.awayPitcher?.number) {
+		updates['awayPitcherLabel'] =
+			`P:    #${self.data.awayPitcher?.number}\n${self.data.awayPitcher?.name.toUpperCase()}`
+	}
+	updates['homePitcherNumber'] = self.data.homePitcher?.number
+	updates['homePitcherName'] = self.data.homePitcher?.name
+	updates['homePitcherLabel'] = 'P:\nunknown'
+	if (self.data.homePitcher?.name) {
+		updates['homePitcherLabel'] = `P:\n${self.data.homePitcher?.name.toUpperCase()}`
+	}
+	if (self.data.homePitcher?.number) {
+		updates['homePitcherLabel'] =
+			`P:    #${self.data.homePitcher?.number}\n${self.data.homePitcher?.name.toUpperCase()}`
+	}
+
 	self.setVariableValues(updates)
 }

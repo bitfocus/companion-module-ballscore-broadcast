@@ -37,15 +37,15 @@ export function UpdateActions(self: ModuleInstance): void {
 			},
 		},
 		select_from_lineup: {
-			name: 'Select from lineup',
+			name: 'Select batter from lineup',
 			options: [
 				{
 					id: 'team',
 					type: 'dropdown',
 					label: 'Select team',
 					choices: [
-						{ id: 'awayLineup', label: 'Away' },
-						{ id: 'homeLineup', label: 'Home' },
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
 					],
 					default: 'away',
 				},
@@ -60,10 +60,10 @@ export function UpdateActions(self: ModuleInstance): void {
 			],
 			callback: async (event: CompanionActionEvent): Promise<void> => {
 				try {
-					const team: string = event.options.team ? event.options.team.toString() : 'awayLineup'
+					const team: string = event.options.team ? event.options.team.toString() : 'away'
 					const num: number = event.options.num ? Number(event.options.num) : 1
 					let guid: string | undefined
-					if (team === 'awayLineup') {
+					if (team === 'away') {
 						guid = self.data.awayLineup[num - 1].guid
 					} else {
 						guid = self.data.homeLineup[num - 1].guid
@@ -73,6 +73,39 @@ export function UpdateActions(self: ModuleInstance): void {
 					self.checkFeedbacks('playerState')
 				} catch (error: any) {
 					self.log('error', `Error selecting from lineup: ${error?.message}`)
+				}
+			},
+		},
+		select_pitcher: {
+			name: 'Select pitcher',
+			options: [
+				{
+					id: 'team',
+					type: 'dropdown',
+					label: 'Select team',
+					choices: [
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
+					],
+					default: 'away',
+				},
+			],
+			callback: async (event: CompanionActionEvent): Promise<void> => {
+				try {
+					const team: string = event.options.team ? event.options.team.toString() : 'away'
+					let guid: string | undefined
+					if (team === 'away') {
+						guid = self.data.awayPitcher?.guid
+					} else {
+						guid = self.data.homePitcher?.guid
+					}
+					if (guid) {
+						await self.apiService.selectLowerThird(guid)
+						self.data = await self.apiService.getCompanionData()
+						self.checkFeedbacks('playerState')
+					}
+				} catch (error: any) {
+					self.log('error', `Error selecting pitcher: ${error?.message}`)
 				}
 			},
 		},

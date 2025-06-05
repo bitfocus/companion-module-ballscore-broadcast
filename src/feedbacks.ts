@@ -52,10 +52,10 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 					type: 'dropdown',
 					label: 'Select team',
 					choices: [
-						{ id: 'awayLineup', label: 'Away Lineup' },
-						{ id: 'homeLineup', label: 'Home Lineup' },
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
 					],
-					default: 'awayLineup',
+					default: 'away',
 				},
 				{
 					id: 'lineupSpot',
@@ -69,7 +69,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 			callback: async (feedback) => {
 				try {
 					const index: number = feedback.options.lineupSpot ? Number(feedback.options.lineupSpot) - 1 : 0
-					if (feedback.options.team === 'awayLineup') {
+					if (feedback.options.team === 'away') {
 						return self.data.awayLineup[index].isUp
 					} else {
 						return self.data.homeLineup[index].isUp
@@ -81,7 +81,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 			},
 		},
 		playerState: {
-			name: 'Is player selected',
+			name: 'Is batter selected',
 			type: 'boolean',
 			defaultStyle: {
 				bgcolor: combineRgb(255, 0, 0),
@@ -93,24 +93,31 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 					type: 'dropdown',
 					label: 'Select team',
 					choices: [
-						{ id: 'awayLineup', label: 'Away Lineup' },
-						{ id: 'homeLineup', label: 'Home Lineup' },
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
 					],
-					default: 'awayLineup',
+					default: 'away',
 				},
 				{
 					id: 'lineupSpot',
 					type: 'number',
-					label: 'Lineup spot',
+					label: 'Lineup spot (10 for pitcher)',
 					default: 1,
 					min: 1,
-					max: 9,
+					max: 10,
 				},
 			],
 			callback: async (feedback) => {
 				try {
+					if (feedback.options.lineupSpot === 10) {
+						if (feedback.options.team === 'away') {
+							return !!self.data.awayPitcher?.guid && self.data.awayPitcher?.guid === self.data.lowerThird?.guid
+						} else {
+							return !!self.data.homePitcher?.guid && self.data.homePitcher?.guid === self.data.lowerThird?.guid
+						}
+					}
 					const index: number = feedback.options.lineupSpot ? Number(feedback.options.lineupSpot) - 1 : 0
-					if (feedback.options.team === 'awayLineup') {
+					if (feedback.options.team === 'away') {
 						return self.data.awayLineup[index].guid === self.data.lowerThird?.guid
 					} else {
 						return self.data.homeLineup[index].guid === self.data.lowerThird?.guid

@@ -56,14 +56,13 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 
 	function fillPresetsWithLineup(away: boolean): void {
 		const team: string = away ? 'away' : 'home'
-		const lineup: string = away ? 'awayLineup' : 'homeLineup'
 		for (let i = 1; i <= 9; i++) {
 			presets[`select_${team}_player_${i}`] = {
 				type: 'button',
 				category: 'Lineup Selection',
 				name: `Batter ${i}`,
 				style: {
-					text: `$(ballscore-broadcast:${lineup}Label${i})`,
+					text: `$(ballscore-broadcast:${team}LineupLabel${i})`,
 					size: '18',
 					alignment: 'left:top',
 					show_topbar: false,
@@ -74,7 +73,7 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 					{
 						feedbackId: 'playerState',
 						options: {
-							team: lineup,
+							team: team,
 							lineupSpot: i,
 						},
 						style: {
@@ -84,7 +83,7 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 					{
 						feedbackId: 'batterState',
 						options: {
-							team: lineup,
+							team: team,
 							lineupSpot: i,
 						},
 						style: {
@@ -98,7 +97,7 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 							{
 								actionId: 'select_from_lineup',
 								options: {
-									team: lineup,
+									team: team,
 									num: i,
 								},
 							},
@@ -107,6 +106,52 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 					},
 				],
 			}
+		}
+	}
+
+	// Presets for selecting pitchers
+	fillPresetsWithPitchers(true)
+	fillPresetsWithPitchers(false)
+
+	function fillPresetsWithPitchers(away: boolean): void {
+		const team: string = away ? 'away' : 'home'
+		presets[`select_${team}_pitcher`] = {
+			type: 'button',
+			category: 'Pitcher Selection',
+			name: `Select ${team} pitcher`,
+			style: {
+				text: `$(ballscore-broadcast:${team}PitcherLabel)`,
+				size: '18',
+				alignment: 'left:top',
+				show_topbar: false,
+				color: away ? combineRgb(255, 255, 255) : combineRgb(0, 0, 0),
+				bgcolor: away ? combineRgb(0, 0, 0) : combineRgb(255, 255, 255),
+			},
+			feedbacks: [
+				{
+					feedbackId: 'playerState',
+					options: {
+						team: team,
+						lineupSpot: 10,
+					},
+					style: {
+						bgcolor: combineRgb(255, 0, 0),
+					},
+				},
+			],
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'select_pitcher',
+							options: {
+								team: team,
+							},
+						},
+					],
+					up: [],
+				},
+			],
 		}
 	}
 

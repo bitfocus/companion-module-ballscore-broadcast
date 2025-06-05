@@ -1,6 +1,6 @@
 import { InstanceBase, InstanceStatus, runEntrypoint, SomeCompanionConfigField } from '@companion-module/base'
 import { GetConfigFields, type ModuleConfig } from './config.js'
-import { updateLineupVariables, UpdateVariableDefinitions } from './variables.js'
+import { updateLineupAndPitchersVariables, UpdateVariableDefinitions } from './variables.js'
 import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
@@ -30,7 +30,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				.then((data: BroadcastCompanionData) => {
 					this.data = data
 					this.checkFeedbacks('batterState', 'playerState', 'componentState')
-					updateLineupVariables(this)
+					updateLineupAndPitchersVariables(this)
 				})
 				.catch((error: any) => {
 					this.log('error', `Error getting companion data: ${error?.message}`)
