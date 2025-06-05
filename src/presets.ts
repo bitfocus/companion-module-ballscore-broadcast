@@ -10,16 +10,17 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 	self.data.controls.forEach((control: Control) => {
 		//dont add following components to presets
 		if (control.component === 'poweredBy') return
-
+		const label: string = control.component.replace(/([A-Z])/g, ' $1').toUpperCase()
 		presets[`toggle_${control.component}`] = {
 			type: 'button',
 			category: 'Components',
-			name: `${control.component}`,
+			name: `${label}`,
 			style: {
-				text: `${control.component.toUpperCase()}`,
-				size: 'auto',
+				text: `${label.toUpperCase()}`,
+				size: '14',
+				show_topbar: false,
 				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 0, 255),
 			},
 			feedbacks: [
 				{
@@ -62,8 +63,10 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 				category: 'Lineup Selection',
 				name: `Batter ${i}`,
 				style: {
-					text: `${i}.$(ballscore-broadcast:${lineup}Name${i})`,
-					size: 'auto',
+					text: `$(ballscore-broadcast:${lineup}Label${i})`,
+					size: '18',
+					alignment: 'left:top',
+					show_topbar: false,
 					color: away ? combineRgb(255, 255, 255) : combineRgb(0, 0, 0),
 					bgcolor: away ? combineRgb(0, 0, 0) : combineRgb(255, 255, 255),
 				},

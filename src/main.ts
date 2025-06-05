@@ -34,8 +34,9 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				})
 				.catch((error: any) => {
 					this.log('error', `Error getting companion data: ${error?.message}`)
+					this.updateStatus(InstanceStatus.Disconnected, error.message)
 				})
-		}, 4000)
+		}, 5000)
 
 		// Return the timer so it can be canceled if needed
 		return this.broadcastTimer

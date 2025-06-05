@@ -2,47 +2,18 @@ import type { ModuleInstance } from './main.js'
 import type { CompanionVariableValues } from '@companion-module/base'
 
 export function UpdateVariableDefinitions(self: ModuleInstance): void {
-	self.setVariableDefinitions([
-		//away lineup
-		{ variableId: 'awayLineupNumber1', name: 'Away Lineup Number 1' },
-		{ variableId: 'awayLineupName1', name: 'Away Lineup Name 1' },
-		{ variableId: 'awayLineupNumber2', name: 'Away Lineup Number 2' },
-		{ variableId: 'awayLineupName2', name: 'Away Lineup Name 2' },
-		{ variableId: 'awayLineupNumber3', name: 'Away Lineup Number 3' },
-		{ variableId: 'awayLineupName3', name: 'Away Lineup Name 3' },
-		{ variableId: 'awayLineupNumber4', name: 'Away Lineup Number 4' },
-		{ variableId: 'awayLineupName4', name: 'Away Lineup Name 4' },
-		{ variableId: 'awayLineupNumber5', name: 'Away Lineup Number 5' },
-		{ variableId: 'awayLineupName5', name: 'Away Lineup Name 5' },
-		{ variableId: 'awayLineupNumber6', name: 'Away Lineup Number 6' },
-		{ variableId: 'awayLineupName6', name: 'Away Lineup Name 6' },
-		{ variableId: 'awayLineupNumber7', name: 'Away Lineup Number 7' },
-		{ variableId: 'awayLineupName7', name: 'Away Lineup Name 7' },
-		{ variableId: 'awayLineupNumber8', name: 'Away Lineup Number 8' },
-		{ variableId: 'awayLineupName8', name: 'Away Lineup Name 8' },
-		{ variableId: 'awayLineupNumber9', name: 'Away Lineup Number 9' },
-		{ variableId: 'awayLineupName9', name: 'Away Lineup Name 9' },
-
-		//home lineup
-		{ variableId: 'homeLineupNumber1', name: 'Home Lineup Number 1' },
-		{ variableId: 'homeLineupName1', name: 'Home Lineup Name 1' },
-		{ variableId: 'homeLineupNumber2', name: 'Home Lineup Number 2' },
-		{ variableId: 'homeLineupName2', name: 'Home Lineup Name 2' },
-		{ variableId: 'homeLineupNumber3', name: 'Home Lineup Number 3' },
-		{ variableId: 'homeLineupName3', name: 'Home Lineup Name 3' },
-		{ variableId: 'homeLineupNumber4', name: 'Home Lineup Number 4' },
-		{ variableId: 'homeLineupName4', name: 'Home Lineup Name 4' },
-		{ variableId: 'homeLineupNumber5', name: 'Home Lineup Number 5' },
-		{ variableId: 'homeLineupName5', name: 'Home Lineup Name 5' },
-		{ variableId: 'homeLineupNumber6', name: 'Home Lineup Number 6' },
-		{ variableId: 'homeLineupName6', name: 'Home Lineup Name 6' },
-		{ variableId: 'homeLineupNumber7', name: 'Home Lineup Number 7' },
-		{ variableId: 'homeLineupName7', name: 'Home Lineup Name 7' },
-		{ variableId: 'homeLineupNumber8', name: 'Home Lineup Number 8' },
-		{ variableId: 'homeLineupName8', name: 'Home Lineup Name 8' },
-		{ variableId: 'homeLineupNumber9', name: 'Home Lineup Number 9' },
-		{ variableId: 'homeLineupName9', name: 'Home Lineup Name 9' },
-	])
+	const variables = []
+	for (let i = 1; i <= 9; i++) {
+		variables.push({ variableId: `awayLineupNumber${i}`, name: `Away Lineup Number ${i}` })
+		variables.push({ variableId: `awayLineupName${i}`, name: `Away Lineup Name ${i}` })
+		variables.push({ variableId: `awayLineupLabel${i}`, name: `Away Lineup Button Label ${i}` })
+	}
+	for (let i = 1; i <= 9; i++) {
+		variables.push({ variableId: `homeLineupNumber${i}`, name: `Home Lineup Number ${i}` })
+		variables.push({ variableId: `homeLineupName${i}`, name: `Home Lineup Name ${i}` })
+		variables.push({ variableId: `homeLineupLabel${i}`, name: `Away Lineup Button Label ${i}` })
+	}
+	self.setVariableDefinitions(variables)
 }
 
 export function updateLineupVariables(self: ModuleInstance): void {
@@ -50,10 +21,22 @@ export function updateLineupVariables(self: ModuleInstance): void {
 	self.data.awayLineup.forEach((player, index) => {
 		updates[`awayLineupNumber${index + 1}`] = player.number
 		updates[`awayLineupName${index + 1}`] = player.name
+		//const lastname: string = player.name.split(' ')[0].toUpperCase()
+		if (player.number) {
+			updates[`awayLineupLabel${index + 1}`] = `${index + 1}.    #${player.number}\n${player.name.toUpperCase()}`
+		} else {
+			updates[`awayLineupLabel${index + 1}`] = `${index + 1}.\n${player.name.toUpperCase()}`
+		}
 	})
 	self.data.homeLineup.forEach((player, index) => {
 		updates[`homeLineupNumber${index + 1}`] = player.number
 		updates[`homeLineupName${index + 1}`] = player.name
+		//const lastname: string = player.name.split(' ')[0].toUpperCase()
+		if (player.number) {
+			updates[`homeLineupLabel${index + 1}`] = `${index + 1}.    #${player.number}\n${player.name.toUpperCase()}`
+		} else {
+			updates[`homeLineupLabel${index + 1}`] = `${index + 1}.\n${player.name.toUpperCase()}`
+		}
 	})
 	self.setVariableValues(updates)
 }

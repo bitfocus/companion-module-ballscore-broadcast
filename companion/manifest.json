@@ -3,7 +3,7 @@
 	"name": "Ball Score Broadcast",
 	"shortname": "Ball Score",
 	"description": "Ball Score remote for controling CG broadcast components",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-ballscore-broadcast.git",
 	"bugs": "https://github.com/bitfocus/companion-module-ballscore-broadcast/issues",
