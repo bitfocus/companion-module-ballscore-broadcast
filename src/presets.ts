@@ -71,13 +71,13 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 				},
 				feedbacks: [
 					{
-						feedbackId: 'playerState',
+						feedbackId: 'playerSelectionState',
 						options: {
 							team: team,
 							lineupSpot: i,
 						},
 						style: {
-							bgcolor: combineRgb(255, 0, 0),
+							bgcolor: combineRgb(255, 128, 0),
 						},
 					},
 					{
@@ -88,6 +88,16 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 						},
 						style: {
 							color: combineRgb(0, 255, 0),
+						},
+					},
+					{
+						feedbackId: 'playerOnAirState',
+						options: {
+							team: team,
+							lineupSpot: i,
+						},
+						style: {
+							bgcolor: combineRgb(255, 0, 0),
 						},
 					},
 				],
@@ -129,7 +139,17 @@ export function UpdatePresetDefinitions(self: ModuleInstance): void {
 			},
 			feedbacks: [
 				{
-					feedbackId: 'playerState',
+					feedbackId: 'playerSelectionState',
+					options: {
+						team: team,
+						lineupSpot: 10,
+					},
+					style: {
+						bgcolor: combineRgb(255, 128, 0),
+					},
+				},
+				{
+					feedbackId: 'playerOnAirState',
 					options: {
 						team: team,
 						lineupSpot: 10,

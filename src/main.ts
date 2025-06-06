@@ -29,7 +29,7 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 				.getCompanionData()
 				.then((data: BroadcastCompanionData) => {
 					this.data = data
-					this.checkFeedbacks('batterState', 'playerState', 'componentState')
+					this.checkFeedbacks('batterState', 'playerSelectionState', 'playerOnAirState', 'componentState')
 					updateLineupAndPitchersVariables(this)
 				})
 				.catch((error: any) => {

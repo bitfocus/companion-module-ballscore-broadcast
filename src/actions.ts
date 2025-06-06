@@ -28,9 +28,15 @@ export function UpdateActions(self: ModuleInstance): void {
 			callback: async (event: CompanionActionEvent): Promise<void> => {
 				try {
 					const component: string = event.options.component ? event.options.component.toString() : 'status'
-					const result = await self.apiService.toggleComponent(component)
+					await self.apiService.toggleComponent(component)
+					const localComponent = self.data.controls.find(c => c.component === component)
+					if (localComponent) {
+						localComponent.action = localComponent.action === 'on' ? 'off' : 'on'
+					}
 					self.checkFeedbacks('componentState')
-					self.log('debug', `Toggle component result: ${JSON.stringify(result)}`)
+					if (event.options.component?.toString() === 'lowerThird') {
+						self.checkFeedbacks('playerOnAirState')
+					}
 				} catch (error: any) {
 					self.log('error', `Error toggling component: ${error?.message}`)
 				}
@@ -70,7 +76,8 @@ export function UpdateActions(self: ModuleInstance): void {
 					}
 					await self.apiService.selectLowerThird(guid)
 					self.data = await self.apiService.getCompanionData()
-					self.checkFeedbacks('playerState')
+					self.checkFeedbacks('playerSelectionState')
+					self.checkFeedbacks('playerOnAirState')
 				} catch (error: any) {
 					self.log('error', `Error selecting from lineup: ${error?.message}`)
 				}
@@ -102,7 +109,8 @@ export function UpdateActions(self: ModuleInstance): void {
 					if (guid) {
 						await self.apiService.selectLowerThird(guid)
 						self.data = await self.apiService.getCompanionData()
-						self.checkFeedbacks('playerState')
+						self.checkFeedbacks('playerSelectionState')
+						self.checkFeedbacks('playerOnAirState')
 					}
 				} catch (error: any) {
 					self.log('error', `Error selecting pitcher: ${error?.message}`)

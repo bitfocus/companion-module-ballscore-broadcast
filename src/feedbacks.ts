@@ -1,5 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import type { ModuleInstance } from './main.js'
+import type { CompanionOptionValues } from '@companion-module/base'
 
 export function UpdateFeedbacks(self: ModuleInstance): void {
 	self.setFeedbackDefinitions({
@@ -32,8 +33,9 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 			],
 			callback: async (feedback) => {
 				try {
-					const result = await self.apiService.getComponent(feedback.options.component?.toString())
-					return result.action === 'on'
+					return (
+						self.data.controls.find((control: any) => control.component === feedback.options.component)?.action === 'on'
+					)
 				} catch (_error) {
 					return false
 				}
@@ -80,8 +82,39 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 				}
 			},
 		},
-		playerState: {
-			name: 'Is batter selected',
+		playerSelectionState: {
+			name: 'Is player selected',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(255, 128, 0),
+				//color: combineRgb(0, 255, 0),
+			},
+			options: [
+				{
+					id: 'team',
+					type: 'dropdown',
+					label: 'Select team',
+					choices: [
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
+					],
+					default: 'away',
+				},
+				{
+					id: 'lineupSpot',
+					type: 'number',
+					label: 'Lineup spot (10 for pitcher)',
+					default: 1,
+					min: 1,
+					max: 10,
+				},
+			],
+			callback: async (feedback) => {
+				return isPlayerSelected(feedback.options)
+			},
+		},
+		playerOnAirState: {
+			name: 'Is player on air',
 			type: 'boolean',
 			defaultStyle: {
 				bgcolor: combineRgb(255, 0, 0),
@@ -109,24 +142,36 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 			],
 			callback: async (feedback) => {
 				try {
-					if (feedback.options.lineupSpot === 10) {
-						if (feedback.options.team === 'away') {
-							return !!self.data.awayPitcher?.guid && self.data.awayPitcher?.guid === self.data.lowerThird?.guid
-						} else {
-							return !!self.data.homePitcher?.guid && self.data.homePitcher?.guid === self.data.lowerThird?.guid
-						}
-					}
-					const index: number = feedback.options.lineupSpot ? Number(feedback.options.lineupSpot) - 1 : 0
-					if (feedback.options.team === 'away') {
-						return self.data.awayLineup[index].guid === self.data.lowerThird?.guid
-					} else {
-						return self.data.homeLineup[index].guid === self.data.lowerThird?.guid
-					}
+					return (
+						isPlayerSelected(feedback.options) &&
+						self.data.controls.find((control: any) => control.component === 'lowerThird')?.action === 'on'
+					)
 				} catch (error: any) {
-					self.log('error', `Error getting player state: ${error?.message}`)
+					self.log('error', `Error getting player on air state: ${error?.message}`)
 					return false
 				}
 			},
 		},
 	})
+
+	function isPlayerSelected(feedBackOptions: CompanionOptionValues): boolean {
+		try {
+			if (feedBackOptions.lineupSpot === 10) {
+				if (feedBackOptions.team === 'away') {
+					return !!self.data.awayPitcher?.guid && self.data.awayPitcher?.guid === self.data.lowerThird?.guid
+				} else {
+					return !!self.data.homePitcher?.guid && self.data.homePitcher?.guid === self.data.lowerThird?.guid
+				}
+			}
+			const index: number = feedBackOptions.lineupSpot ? Number(feedBackOptions.lineupSpot) - 1 : 0
+			if (feedBackOptions.team === 'away') {
+				return self.data.awayLineup[index].guid === self.data.lowerThird?.guid
+			} else {
+				return self.data.homeLineup[index].guid === self.data.lowerThird?.guid
+			}
+		} catch (error: any) {
+			self.log('error', `Error getting player state: ${error?.message}`)
+			return false
+		}
+	}
 }
