@@ -23,7 +23,7 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<ModuleConfig>
 			clearInterval(this.broadcastTimer)
 		}
 
-		// Set up a new timer that calls getCompanionData every second
+		// Set up a new timer that calls getCompanionData every 5 seconds
 		this.broadcastTimer = setInterval(() => {
 			this.apiService
 				.getCompanionData()
