@@ -1,7 +1,7 @@
-import type { ModuleInstance } from './main.js'
+import type { BallScoreBroadcastModuleInstance } from './main.js'
 import type { CompanionVariableValues } from '@companion-module/base'
 
-export function UpdateVariableDefinitions(self: ModuleInstance): void {
+export function UpdateVariableDefinitions(self: BallScoreBroadcastModuleInstance): void {
 	const variables = []
 	for (let i = 1; i <= 9; i++) {
 		variables.push({ variableId: `awayLineupNumber${i}`, name: `Away Lineup Number ${i}` })
@@ -22,7 +22,7 @@ export function UpdateVariableDefinitions(self: ModuleInstance): void {
 	self.setVariableDefinitions(variables)
 }
 
-export function updateLineupAndPitchersVariables(self: ModuleInstance): void {
+export function updateLineupAndPitchersVariables(self: BallScoreBroadcastModuleInstance): void {
 	const updates: CompanionVariableValues = {}
 	//clear values
 	for (let i = 1; i <= 9; i++) {

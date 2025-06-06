@@ -1,8 +1,8 @@
 import { combineRgb } from '@companion-module/base'
-import type { ModuleInstance } from './main.js'
+import type { BallScoreBroadcastModuleInstance } from './main.js'
 import type { CompanionOptionValues } from '@companion-module/base'
 
-export function UpdateFeedbacks(self: ModuleInstance): void {
+export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 	self.setFeedbackDefinitions({
 		componentState: {
 			name: 'State of component',

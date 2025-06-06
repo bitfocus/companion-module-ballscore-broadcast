@@ -7,7 +7,7 @@ import { UpdateFeedbacks } from './feedbacks.js'
 import { UpdatePresetDefinitions } from './presets.js'
 import { ApiService, BroadcastCompanionData } from './api-service.js'
 
-export class ModuleInstance extends InstanceBase<ModuleConfig> {
+export class BallScoreBroadcastModuleInstance extends InstanceBase<ModuleConfig> {
 	config!: ModuleConfig // Setup in init()
 	apiService!: ApiService
 	data!: BroadcastCompanionData
@@ -109,4 +109,4 @@ export class ModuleInstance extends InstanceBase<ModuleConfig> {
 	}
 }
 
-runEntrypoint(ModuleInstance, UpgradeScripts)
+runEntrypoint(BallScoreBroadcastModuleInstance, UpgradeScripts)

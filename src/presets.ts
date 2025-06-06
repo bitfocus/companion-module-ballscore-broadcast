@@ -1,9 +1,9 @@
 import { CompanionPresetDefinitions } from '@companion-module/base'
-import type { ModuleInstance } from './main.js'
+import type { BallScoreBroadcastModuleInstance } from './main.js'
 import { combineRgb } from '@companion-module/base'
 import { Control } from './api-service.js'
 
-export function UpdatePresetDefinitions(self: ModuleInstance): void {
+export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance): void {
 	const presets: CompanionPresetDefinitions = {}
 
 	//component presets

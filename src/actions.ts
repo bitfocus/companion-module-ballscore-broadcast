@@ -1,7 +1,7 @@
-import type { ModuleInstance } from './main.js'
+import type { BallScoreBroadcastModuleInstance } from './main.js'
 import { CompanionActionEvent } from '@companion-module/base'
 
-export function UpdateActions(self: ModuleInstance): void {
+export function UpdateActions(self: BallScoreBroadcastModuleInstance): void {
 	self.setActionDefinitions({
 		toggle_component: {
 			name: 'Toggle component',
