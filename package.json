@@ -6,8 +6,8 @@
 	"scripts": {
 		"postinstall": "husky",
 		"format": "prettier -w .",
-		"package": "npm run build && companion-module-build",
-		"build": "rimraf dist && npm run build:main",
+		"package": "run build && companion-module-build",
+		"build": "rimraf dist && run build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"dev": "tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint",
