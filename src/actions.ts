@@ -29,7 +29,7 @@ export function UpdateActions(self: ModuleInstance): void {
 				try {
 					const component: string = event.options.component ? event.options.component.toString() : 'status'
 					await self.apiService.toggleComponent(component)
-					const localComponent = self.data.controls.find(c => c.component === component)
+					const localComponent = self.data.controls.find((c) => c.component === component)
 					if (localComponent) {
 						localComponent.action = localComponent.action === 'on' ? 'off' : 'on'
 					}
