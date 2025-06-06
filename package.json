@@ -16,7 +16,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/palmyman/companion-module-ballscore-broadcast.git"
+		"url": "git+https://github.com/bitfocus/companion-module-ballscore-broadcast.git"
 	},
 	"engines": {
 		"node": "^22.14",
