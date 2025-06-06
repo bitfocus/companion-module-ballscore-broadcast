@@ -12,7 +12,6 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			type: 'textinput',
 			label: 'Secret Key',
 			width: 8,
-			regex: '^[\\w]{20}$',
 			required: true,
 		},
 		{
