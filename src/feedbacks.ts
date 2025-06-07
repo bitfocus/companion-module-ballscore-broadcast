@@ -1,15 +1,22 @@
-import { combineRgb } from '@companion-module/base'
 import type { BallScoreBroadcastModuleInstance } from './main.js'
 import type { CompanionOptionValues } from '@companion-module/base'
 
 export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
+	//const white: number = '#fff' as unknown as number
+	const black: number = '#000' as unknown as number
+	const red: number = '#f00' as unknown as number
+	const green: number = '#0f0' as unknown as number
+	//const blue: number = '#00f' as unknown as number
+	//const yellow: number = '#ff0' as unknown as number
+	const orange: number = '#ff8000' as unknown as number
+
 	self.setFeedbackDefinitions({
 		componentState: {
 			name: 'State of component',
 			type: 'boolean',
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: red,
+				color: black,
 			},
 			options: [
 				{
@@ -45,8 +52,7 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 			name: 'Is batter up',
 			type: 'boolean',
 			defaultStyle: {
-				//bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 255, 0),
+				color: green,
 			},
 			options: [
 				{
@@ -86,8 +92,7 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 			name: 'Is player selected',
 			type: 'boolean',
 			defaultStyle: {
-				bgcolor: combineRgb(255, 128, 0),
-				//color: combineRgb(0, 255, 0),
+				bgcolor: orange,
 			},
 			options: [
 				{
@@ -117,8 +122,7 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 			name: 'Is player on air',
 			type: 'boolean',
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				//color: combineRgb(0, 255, 0),
+				bgcolor: red,
 			},
 			options: [
 				{

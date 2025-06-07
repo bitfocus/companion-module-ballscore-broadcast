@@ -1,10 +1,16 @@
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import type { BallScoreBroadcastModuleInstance } from './main.js'
-import { combineRgb } from '@companion-module/base'
 import { Control } from './api-service.js'
 
 export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance): void {
 	const presets: CompanionPresetDefinitions = {}
+	const white: number = '#fff' as unknown as number
+	const black: number = '#000' as unknown as number
+	const red: number = '#f00' as unknown as number
+	const green: number = '#0f0' as unknown as number
+	const blue: number = '#00f' as unknown as number
+	//const yellow: number = '#ff0' as unknown as number
+	const orange: number = '#ff8000' as unknown as number
 
 	//component presets
 	self.data.controls.forEach((control: Control) => {
@@ -19,8 +25,8 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 				text: `${label.toUpperCase()}`,
 				size: '14',
 				show_topbar: false,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 255),
+				color: white,
+				bgcolor: blue,
 			},
 			feedbacks: [
 				{
@@ -29,8 +35,8 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 						component: control.component,
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
+						bgcolor: red,
+						color: white,
 					},
 				},
 			],
@@ -66,8 +72,8 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 					size: '18',
 					alignment: 'left:top',
 					show_topbar: false,
-					color: away ? combineRgb(255, 255, 255) : combineRgb(0, 0, 0),
-					bgcolor: away ? combineRgb(0, 0, 0) : combineRgb(255, 255, 255),
+					color: away ? white : black,
+					bgcolor: away ? black : white,
 				},
 				feedbacks: [
 					{
@@ -77,7 +83,7 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 							lineupSpot: i,
 						},
 						style: {
-							bgcolor: combineRgb(255, 128, 0),
+							bgcolor: orange,
 						},
 					},
 					{
@@ -87,7 +93,7 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 							lineupSpot: i,
 						},
 						style: {
-							color: combineRgb(0, 255, 0),
+							color: green,
 						},
 					},
 					{
@@ -97,7 +103,7 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 							lineupSpot: i,
 						},
 						style: {
-							bgcolor: combineRgb(255, 0, 0),
+							bgcolor: red,
 						},
 					},
 				],
@@ -134,8 +140,8 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 				size: '18',
 				alignment: 'left:top',
 				show_topbar: false,
-				color: away ? combineRgb(255, 255, 255) : combineRgb(0, 0, 0),
-				bgcolor: away ? combineRgb(0, 0, 0) : combineRgb(255, 255, 255),
+				color: away ? white : black,
+				bgcolor: away ? black : white,
 			},
 			feedbacks: [
 				{
@@ -145,7 +151,7 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 						lineupSpot: 10,
 					},
 					style: {
-						bgcolor: combineRgb(255, 128, 0),
+						bgcolor: orange,
 					},
 				},
 				{
@@ -155,7 +161,7 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 						lineupSpot: 10,
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
+						bgcolor: red,
 					},
 				},
 			],
