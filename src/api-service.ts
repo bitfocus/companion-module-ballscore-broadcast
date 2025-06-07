@@ -1,4 +1,4 @@
-import { ModuleConfig } from './config.js'
+import { BallScoreBroadcastModuleConfig } from './config.js'
 import axios from 'axios'
 import * as console from 'node:console'
 
@@ -14,7 +14,7 @@ export class ApiService {
 		}
 	}
 
-	constructor(config: ModuleConfig) {
+	constructor(config: BallScoreBroadcastModuleConfig) {
 		console.log('initalizing ApiService with config', config)
 		this.secretKey = config.secretKey
 		switch (config.environment) {

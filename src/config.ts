@@ -1,6 +1,6 @@
 import { type SomeCompanionConfigField } from '@companion-module/base'
 
-export interface ModuleConfig {
+export interface BallScoreBroadcastModuleConfig {
 	secretKey: string
 	environment: string
 }

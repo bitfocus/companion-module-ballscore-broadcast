@@ -1,5 +1,5 @@
 import { InstanceBase, InstanceStatus, runEntrypoint, SomeCompanionConfigField } from '@companion-module/base'
-import { GetConfigFields, type ModuleConfig } from './config.js'
+import { GetConfigFields, type BallScoreBroadcastModuleConfig } from './config.js'
 import { updateLineupAndPitchersVariables, UpdateVariableDefinitions } from './variables.js'
 import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
@@ -7,8 +7,8 @@ import { UpdateFeedbacks } from './feedbacks.js'
 import { UpdatePresetDefinitions } from './presets.js'
 import { ApiService, BroadcastCompanionData } from './api-service.js'
 
-export class BallScoreBroadcastModuleInstance extends InstanceBase<ModuleConfig> {
-	config!: ModuleConfig // Setup in init()
+export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroadcastModuleConfig> {
+	config!: BallScoreBroadcastModuleConfig // Setup in init()
 	apiService!: ApiService
 	data!: BroadcastCompanionData
 	broadcastTimer!: NodeJS.Timeout | null
@@ -42,7 +42,7 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<ModuleConfig>
 		return this.broadcastTimer
 	}
 
-	private async connectToBroadcast(config: ModuleConfig): Promise<void> {
+	private async connectToBroadcast(config: BallScoreBroadcastModuleConfig): Promise<void> {
 		this.log('debug', 'connectingToBroadcast')
 		this.updateStatus(InstanceStatus.Connecting)
 		this.apiService = new ApiService(config)
@@ -58,7 +58,7 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<ModuleConfig>
 			})
 	}
 
-	async init(config: ModuleConfig): Promise<void> {
+	async init(config: BallScoreBroadcastModuleConfig): Promise<void> {
 		this.config = config
 
 		await this.connectToBroadcast(config)
@@ -78,17 +78,21 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<ModuleConfig>
 		}
 	}
 
-	async configUpdated(config: ModuleConfig): Promise<void> {
-		this.config = config
-		// Clear any existing timer when config is updated
-		if (this.broadcastTimer) {
-			clearInterval(this.broadcastTimer)
-			this.broadcastTimer = null
-		}
-		await this.connectToBroadcast(config)
+	async configUpdated(config: BallScoreBroadcastModuleConfig): Promise<void> {
+		const isReconnectionNeeded: boolean =
+			config.environment != this.config.environment || config.secretKey != this.config.secretKey
+		//if environment or secretKey has changed, reconnect to broadcast
+		if (isReconnectionNeeded) {
+			// Clear any existing timer when config is updated
+			if (this.broadcastTimer) {
+				clearInterval(this.broadcastTimer)
+				this.broadcastTimer = null
+			}
+			await this.connectToBroadcast(config)
 
-		// Refresh presets when config is updated
-		UpdatePresetDefinitions(this)
+			// Refresh presets when config is updated
+			UpdatePresetDefinitions(this)
+		}
 	}
 
 	// Return config fields for web config
