@@ -45,17 +45,17 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 	private async connectToBroadcast(config: BallScoreBroadcastModuleConfig): Promise<void> {
 		this.log('debug', 'connectingToBroadcast')
 		this.updateStatus(InstanceStatus.Connecting)
-		this.apiService = new ApiService(config)
-		return this.apiService
-			.getCompanionData()
-			.then((data) => {
-				this.data = data
-				this.updateStatus(InstanceStatus.Ok)
-				this.subscribeToBroadcast()
-			})
-			.catch((error) => {
-				this.updateStatus(InstanceStatus.UnknownError, error.message)
-			})
+		try {
+			this.apiService = new ApiService(config)
+			const data: BroadcastCompanionData = await this.apiService.getCompanionData()
+			this.data = data
+			this.updateStatus(InstanceStatus.Ok)
+			this.subscribeToBroadcast()
+		} catch (error: any) {
+			this.log('error', `Error connecting to broadcast: ${error?.message}`)
+			this.updateStatus(InstanceStatus.UnknownError, error.message)
+			throw error
+		}
 	}
 
 	async init(config: BallScoreBroadcastModuleConfig): Promise<void> {
