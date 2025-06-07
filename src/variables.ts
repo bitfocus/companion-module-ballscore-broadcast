@@ -4,21 +4,27 @@ import type { CompanionVariableValues } from '@companion-module/base'
 export function UpdateVariableDefinitions(self: BallScoreBroadcastModuleInstance): void {
 	const variables = []
 	for (let i = 1; i <= 9; i++) {
-		variables.push({ variableId: `awayLineupNumber${i}`, name: `Away Lineup Number ${i}` })
-		variables.push({ variableId: `awayLineupName${i}`, name: `Away Lineup Name ${i}` })
-		variables.push({ variableId: `awayLineupLabel${i}`, name: `Away Lineup Button Label ${i}` })
+		variables.push(
+			{ variableId: `awayLineupNumber${i}`, name: `Away Lineup Number ${i}` },
+			{ variableId: `awayLineupName${i}`, name: `Away Lineup Name ${i}` },
+			{ variableId: `awayLineupLabel${i}`, name: `Away Lineup Button Label ${i}` },
+		)
 	}
 	for (let i = 1; i <= 9; i++) {
-		variables.push({ variableId: `homeLineupNumber${i}`, name: `Home Lineup Number ${i}` })
-		variables.push({ variableId: `homeLineupName${i}`, name: `Home Lineup Name ${i}` })
-		variables.push({ variableId: `homeLineupLabel${i}`, name: `Away Lineup Button Label ${i}` })
+		variables.push(
+			{ variableId: `homeLineupNumber${i}`, name: `Home Lineup Number ${i}` },
+			{ variableId: `homeLineupName${i}`, name: `Home Lineup Name ${i}` },
+			{ variableId: `homeLineupLabel${i}`, name: `Away Lineup Button Label ${i}` },
+		)
 	}
-	variables.push({ variableId: 'awayPitcherNumber', name: 'Away pitcher number' })
-	variables.push({ variableId: 'awayPitcherName', name: 'Away pitcher name' })
-	variables.push({ variableId: 'awayPitcherLabel', name: 'Away pitcher Button Label' })
-	variables.push({ variableId: 'homePitcherNumber', name: 'Home pitcher number' })
-	variables.push({ variableId: 'homePitcherName', name: 'Home pitcher name' })
-	variables.push({ variableId: 'homePitcherLabel', name: 'Home pitcher Button Label' })
+	variables.push(
+		{ variableId: 'awayPitcherNumber', name: 'Away pitcher number' },
+		{ variableId: 'awayPitcherName', name: 'Away pitcher name' },
+		{ variableId: 'awayPitcherLabel', name: 'Away pitcher Button Label' },
+		{ variableId: 'homePitcherNumber', name: 'Home pitcher number' },
+		{ variableId: 'homePitcherName', name: 'Home pitcher name' },
+		{ variableId: 'homePitcherLabel', name: 'Home pitcher Button Label' },
+	)
 	self.setVariableDefinitions(variables)
 }
 
