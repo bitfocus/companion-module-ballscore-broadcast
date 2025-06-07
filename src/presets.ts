@@ -13,7 +13,7 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 	const orange: number = '#ff8000' as unknown as number
 
 	//component presets
-	self.data.controls.forEach((control: Control) => {
+	self.data?.controls.forEach((control: Control) => {
 		//dont add following components to presets
 		if (control.component === 'poweredBy') return
 		const label: string = control.component.replace(/([A-Z])/g, ' $1').toUpperCase()

@@ -42,17 +42,26 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 		return this.broadcastTimer
 	}
 
-	private async connectToBroadcast(config: BallScoreBroadcastModuleConfig): Promise<void> {
-		this.log('debug', 'connectingToBroadcast')
+	private async connectToBallScore(config: BallScoreBroadcastModuleConfig): Promise<void> {
+		this.log('debug', 'connectingToBallScore')
 		this.updateStatus(InstanceStatus.Connecting)
 		try {
 			this.apiService = new ApiService(config)
-			const data: BroadcastCompanionData = await this.apiService.getCompanionData()
-			this.data = data
+			this.data = await this.apiService.getCompanionData()
 			this.updateStatus(InstanceStatus.Ok)
 			this.subscribeToBroadcast()
 		} catch (error: any) {
-			this.log('error', `Error connecting to broadcast: ${error?.message}`)
+			if (error.response?.status === 401 || error.response?.status === 403) {
+				this.log('warn', `Error connecting to  Ball Score: ${error?.message}`)
+				this.updateStatus(InstanceStatus.AuthenticationFailure, error.message)
+				return
+			}
+			if (error.response?.status === 404) {
+				this.log('warn', `Error connecting to broadcast: ${error?.message}`)
+				this.updateStatus(InstanceStatus.ConnectionFailure, error.message)
+				return
+			}
+			this.log('error', `Error connecting to Ball Score: ${error?.message}`)
 			this.updateStatus(InstanceStatus.UnknownError, error.message)
 			throw error
 		}
@@ -61,7 +70,7 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 	async init(config: BallScoreBroadcastModuleConfig): Promise<void> {
 		this.config = config
 
-		await this.connectToBroadcast(config)
+		await this.connectToBallScore(config)
 
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
@@ -88,11 +97,12 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 				clearInterval(this.broadcastTimer)
 				this.broadcastTimer = null
 			}
-			await this.connectToBroadcast(config)
+			await this.connectToBallScore(config)
 
 			// Refresh presets when config is updated
 			UpdatePresetDefinitions(this)
 		}
+		this.config = config
 	}
 
 	// Return config fields for web config
