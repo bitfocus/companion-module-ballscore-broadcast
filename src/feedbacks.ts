@@ -25,7 +25,8 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 					label: 'Select component',
 					choices: [
 						{ id: 'status', label: 'Status' },
-						{ id: 'batter', label: 'Batter' },
+						{ id: 'batter', label: 'Current Batter' },
+						{ id: 'pitcher', label: 'Current Pitcher' },
 						{ id: 'lowerThird', label: 'Lower Third' },
 						{ id: 'boxScore', label: 'Box Score' },
 						{ id: 'intro', label: 'Intro' },
@@ -36,6 +37,7 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 						{ id: 'customTable', label: 'Custom Table' },
 					],
 					default: 'status',
+					allowCustom: true,
 				},
 			],
 			callback: async (feedback) => {
