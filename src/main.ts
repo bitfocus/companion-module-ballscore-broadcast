@@ -71,8 +71,8 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 	async init(config: BallScoreBroadcastModuleConfig): Promise<void> {
 		this.config = config
 
-		if (!config.secretKey || !config.environment) {
-			return this.updateStatus(InstanceStatus.BadConfig, 'Secret key and environment are required')
+		if (!config.secretKey || config.secretKey === '') {
+			return this.updateStatus(InstanceStatus.BadConfig, 'Make sure to set the Secret Key config property.')
 		}
 
 		try {
@@ -99,8 +99,8 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 	}
 
 	async configUpdated(config: BallScoreBroadcastModuleConfig): Promise<void> {
-		if (!config.secretKey || !config.environment) {
-			return this.updateStatus(InstanceStatus.BadConfig, 'Secret key and environment are required')
+		if (!config.secretKey || config.secretKey === '') {
+			return this.updateStatus(InstanceStatus.BadConfig, 'Make sure to set the Secret Key config property.')
 		}
 
 		const isReconnectionNeeded: boolean =

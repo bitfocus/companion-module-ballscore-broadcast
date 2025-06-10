@@ -13,6 +13,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			label: 'Secret Key',
 			width: 8,
 			required: true,
+			default: '',
 		},
 		{
 			id: 'environment',
