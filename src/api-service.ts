@@ -6,11 +6,14 @@ export class ApiService {
 	private readonly secretKey: string
 	private readonly baseUrl: string | undefined
 
-	private get httpHeader() {
+	private get requestConfig() {
 		return {
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			'x-secret-key': this.secretKey,
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				'x-secret-key': this.secretKey,
+			},
+			timeout: 1000,
 		}
 	}
 
@@ -34,33 +37,36 @@ export class ApiService {
 
 	async getComponents(): Promise<Control[]> {
 		const url = `${this.baseUrl}/broadcasts/${this.secretKey}/controls`
-		const response = await axios.get<Control[]>(url, { headers: this.httpHeader })
+		const response = await axios.get<Control[]>(url, this.requestConfig)
 		return response.data
 	}
 
 	async getComponent(component?: string): Promise<Control> {
 		if (!component) throw new Error('No component provided')
 		const url = `${this.baseUrl}/controls/${component}`
-		const response = await axios.get<Control>(url, { headers: this.httpHeader })
+		const response = await axios.get<Control>(url, this.requestConfig)
 		return response.data
 	}
 
 	async toggleComponent(component?: string): Promise<void> {
 		if (!component) throw new Error('No component provided')
 		const url = `${this.baseUrl}/controls/${component}/toggle`
-		await axios.put<void>(url, {}, { headers: this.httpHeader })
+		await axios.put<void>(url, {}, this.requestConfig)
 	}
 
 	async selectLowerThird(playerGuid?: string): Promise<void> {
 		if (!playerGuid) throw new Error('No playerGuid provided')
 		const url = `${this.baseUrl}/lower-third/${playerGuid}`
-		await axios.put<void>(url, {}, { headers: this.httpHeader })
+		await axios.put<void>(url, {}, this.requestConfig)
 	}
 
 	async getCompanionData(): Promise<BroadcastCompanionData> {
 		const url = `${this.baseUrl}/companion`
-		console.log('gettingCompanionData', url, this.httpHeader)
-		const response = await axios.get<BroadcastCompanionData>(url, { headers: this.httpHeader })
+		console.log('gettingCompanionData', url, this.requestConfig)
+		const response = await axios.get<BroadcastCompanionData>(url, this.requestConfig)
+		if (!response?.data?.controls?.length) {
+			throw new Error('Error getting companion data from API!')
+		}
 		return response.data
 	}
 }

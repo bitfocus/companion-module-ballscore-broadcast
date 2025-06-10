@@ -48,6 +48,7 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 		try {
 			this.apiService = new ApiService(config)
 			this.data = await this.apiService.getCompanionData()
+			this.log('debug', 'got response or timeout from Ball Score')
 			this.updateStatus(InstanceStatus.Ok)
 			this.subscribeToBroadcast()
 		} catch (error: any) {
@@ -70,13 +71,23 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 	async init(config: BallScoreBroadcastModuleConfig): Promise<void> {
 		this.config = config
 
-		await this.connectToBallScore(config)
+		if (!config.secretKey || !config.environment) {
+			return this.updateStatus(InstanceStatus.BadConfig, 'Secret key and environment are required')
+		}
 
-		this.updateActions() // export actions
-		this.updateFeedbacks() // export feedbacks
-		this.updateVariableDefinitions() // export variable definitions
-		UpdatePresetDefinitions(this) // export preset definitions
+		try {
+			await this.connectToBallScore(config)
+
+			this.updateActions() // export actions
+			this.updateFeedbacks() // export feedbacks
+			this.updateVariableDefinitions() // export variable definitions
+			UpdatePresetDefinitions(this) // export preset definitions
+		} catch (error: any) {
+			this.log('error', `Error connecting to Ball Score: ${error?.message}`)
+			this.updateStatus(InstanceStatus.ConnectionFailure, error.message)
+		}
 	}
+
 	// When module gets deleted
 	async destroy(): Promise<void> {
 		this.log('debug', 'destroy')
@@ -88,6 +99,10 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 	}
 
 	async configUpdated(config: BallScoreBroadcastModuleConfig): Promise<void> {
+		if (!config.secretKey || !config.environment) {
+			return this.updateStatus(InstanceStatus.BadConfig, 'Secret key and environment are required')
+		}
+
 		const isReconnectionNeeded: boolean =
 			config.environment != this.config.environment || config.secretKey != this.config.secretKey
 		//if environment or secretKey has changed, reconnect to broadcast
