@@ -43,7 +43,8 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 			callback: async (feedback) => {
 				try {
 					return (
-						self.data.controls.find((control: any) => control.component === feedback.options.component)?.action === 'on'
+						self.data?.controls?.find((control: any) => control.component === feedback.options.component)?.action ===
+						'on'
 					)
 				} catch (_error) {
 					return false
@@ -80,9 +81,9 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 				try {
 					const index: number = feedback.options.lineupSpot ? Number(feedback.options.lineupSpot) - 1 : 0
 					if (feedback.options.team === 'away') {
-						return self.data.awayLineup[index].isUp
+						return self.data?.awayLineup?.[index]?.isUp ?? false
 					} else {
-						return self.data.homeLineup[index].isUp
+						return self.data?.homeLineup?.[index]?.isUp ?? false
 					}
 				} catch (error: any) {
 					self.log('error', `Error getting batter state: ${error.message}`)
@@ -150,7 +151,7 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 				try {
 					return (
 						isPlayerSelected(feedback.options) &&
-						self.data.controls.find((control: any) => control.component === 'lowerThird')?.action === 'on'
+						self.data?.controls?.find((control: any) => control.component === 'lowerThird')?.action === 'on'
 					)
 				} catch (error: any) {
 					self.log('error', `Error getting player on air state: ${error?.message}`)
@@ -164,16 +165,16 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 		try {
 			if (feedBackOptions.lineupSpot === 10) {
 				if (feedBackOptions.team === 'away') {
-					return !!self.data.awayPitcher?.guid && self.data.awayPitcher?.guid === self.data.lowerThird?.guid
+					return !!self.data?.awayPitcher?.guid && self.data?.awayPitcher?.guid === self.data?.lowerThird?.guid
 				} else {
-					return !!self.data.homePitcher?.guid && self.data.homePitcher?.guid === self.data.lowerThird?.guid
+					return !!self.data?.homePitcher?.guid && self.data?.homePitcher?.guid === self.data?.lowerThird?.guid
 				}
 			}
 			const index: number = feedBackOptions.lineupSpot ? Number(feedBackOptions.lineupSpot) - 1 : 0
 			if (feedBackOptions.team === 'away') {
-				return self.data.awayLineup[index].guid === self.data.lowerThird?.guid
+				return self.data?.awayLineup?.[index]?.guid === self.data?.lowerThird?.guid
 			} else {
-				return self.data.homeLineup[index].guid === self.data.lowerThird?.guid
+				return self.data?.homeLineup?.[index]?.guid === self.data?.lowerThird?.guid
 			}
 		} catch (error: any) {
 			self.log('error', `Error getting player state: ${error?.message}`)

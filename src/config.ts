@@ -3,6 +3,7 @@ import { type SomeCompanionConfigField } from '@companion-module/base'
 export interface BallScoreBroadcastModuleConfig {
 	secretKey: string
 	environment: string
+	timeout?: number
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
@@ -27,6 +28,15 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 				{ id: 'local', label: 'Local' },
 			],
 			default: 'prod',
+		},
+		{
+			id: 'timeout',
+			type: 'number',
+			label: 'API timeout (ms)',
+			width: 8,
+			min: 500,
+			max: 30000,
+			default: 4000,
 		},
 	]
 }
