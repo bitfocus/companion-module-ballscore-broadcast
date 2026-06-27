@@ -31,7 +31,7 @@ export function UpdateActions(self: BallScoreBroadcastModuleInstance): void {
 				try {
 					const component: string = event.options.component ? event.options.component.toString() : 'status'
 					await self.apiService.toggleComponent(component)
-					const localComponent = self.data.controls.find((c) => c.component === component)
+					const localComponent = self.data?.controls?.find((c) => c.component === component)
 					if (localComponent) {
 						localComponent.action = localComponent.action === 'on' ? 'off' : 'on'
 					}
@@ -72,9 +72,9 @@ export function UpdateActions(self: BallScoreBroadcastModuleInstance): void {
 					const num: number = event.options.num ? Number(event.options.num) : 1
 					let guid: string | undefined
 					if (team === 'away') {
-						guid = self.data.awayLineup[num - 1].guid
+						guid = self.data?.awayLineup?.[num - 1]?.guid
 					} else {
-						guid = self.data.homeLineup[num - 1].guid
+						guid = self.data?.homeLineup?.[num - 1]?.guid
 					}
 					await self.apiService.selectLowerThird(guid)
 					self.data = await self.apiService.getCompanionData()
@@ -104,9 +104,9 @@ export function UpdateActions(self: BallScoreBroadcastModuleInstance): void {
 					const team: string = event.options.team ? event.options.team.toString() : 'away'
 					let guid: string | undefined
 					if (team === 'away') {
-						guid = self.data.awayPitcher?.guid
+						guid = self.data?.awayPitcher?.guid
 					} else {
-						guid = self.data.homePitcher?.guid
+						guid = self.data?.homePitcher?.guid
 					}
 					if (guid) {
 						await self.apiService.selectLowerThird(guid)

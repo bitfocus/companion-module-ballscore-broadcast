@@ -1,10 +1,12 @@
 import { BallScoreBroadcastModuleConfig } from './config.js'
 import axios from 'axios'
-import * as console from 'node:console'
+
+export const DEFAULT_TIMEOUT_MS = 4000
 
 export class ApiService {
 	private readonly secretKey: string
 	private readonly baseUrl: string | undefined
+	private readonly timeout: number
 
 	private get requestConfig() {
 		return {
@@ -13,13 +15,13 @@ export class ApiService {
 				Accept: 'application/json',
 				'x-secret-key': this.secretKey,
 			},
-			timeout: 1000,
+			timeout: this.timeout,
 		}
 	}
 
 	constructor(config: BallScoreBroadcastModuleConfig) {
-		console.log('initalizing ApiService with config', config)
 		this.secretKey = config.secretKey
+		this.timeout = config.timeout && config.timeout > 0 ? config.timeout : DEFAULT_TIMEOUT_MS
 		switch (config.environment) {
 			case 'prod':
 				this.baseUrl = 'https://www.ballscore.app/api/v1'
@@ -62,10 +64,11 @@ export class ApiService {
 
 	async getCompanionData(): Promise<BroadcastCompanionData> {
 		const url = `${this.baseUrl}/companion`
-		console.log('gettingCompanionData', url, this.requestConfig)
 		const response = await axios.get<BroadcastCompanionData>(url, this.requestConfig)
-		if (!response?.data?.controls?.length) {
-			throw new Error('Error getting companion data from API!')
+		// An empty controls array is valid (broadcast not configured yet); only a
+		// missing/malformed payload is an error.
+		if (!response?.data || !Array.isArray(response.data.controls)) {
+			throw new Error('Malformed companion data from API!')
 		}
 		return response.data
 	}
@@ -73,6 +76,7 @@ export class ApiService {
 
 export interface BroadcastCompanionData {
 	gameId?: string
+	finished?: boolean
 	awayLineup: Player[]
 	homeLineup: Player[]
 	awayPitcher?: Player
