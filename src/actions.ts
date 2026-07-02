@@ -1,5 +1,6 @@
 import type { BallScoreBroadcastModuleInstance } from './main.js'
 import { CompanionActionEvent } from '@companion-module/base'
+import { MAX_ROSTER } from './api-service.js'
 
 export function UpdateActions(self: BallScoreBroadcastModuleInstance): void {
 	self.setActionDefinitions({
@@ -116,6 +117,44 @@ export function UpdateActions(self: BallScoreBroadcastModuleInstance): void {
 					}
 				} catch (error: any) {
 					self.log('error', `Error selecting pitcher: ${error?.message}`)
+				}
+			},
+		},
+		select_from_roster: {
+			name: 'Select player from roster',
+			options: [
+				{
+					id: 'team',
+					type: 'dropdown',
+					label: 'Select team',
+					choices: [
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
+					],
+					default: 'away',
+				},
+				{
+					id: 'num',
+					type: 'number',
+					label: 'Roster index',
+					default: 1,
+					min: 1,
+					max: MAX_ROSTER,
+				},
+			],
+			callback: async (event: CompanionActionEvent): Promise<void> => {
+				try {
+					const team: string = event.options.team ? event.options.team.toString() : 'away'
+					const num: number = event.options.num ? Number(event.options.num) : 1
+					const roster = team === 'away' ? self.data?.awayRoster : self.data?.homeRoster
+					const guid: string | undefined = roster?.[num - 1]?.guid
+					if (!guid) return
+					await self.apiService.selectLowerThird(guid)
+					self.data = await self.apiService.getCompanionData()
+					self.checkFeedbacks('rosterPlayerSelectionState', 'rosterPlayerOnAirState')
+					self.checkFeedbacks('playerSelectionState', 'playerOnAirState')
+				} catch (error: any) {
+					self.log('error', `Error selecting from roster: ${error?.message}`)
 				}
 			},
 		},

@@ -1,5 +1,6 @@
 import type { BallScoreBroadcastModuleInstance } from './main.js'
 import type { CompanionOptionValues } from '@companion-module/base'
+import { MAX_ROSTER } from './api-service.js'
 
 export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 	//const white: number = '#fff' as unknown as number
@@ -9,6 +10,7 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 	//const blue: number = '#00f' as unknown as number
 	//const yellow: number = '#ff0' as unknown as number
 	const orange: number = '#ff8000' as unknown as number
+	const dim: number = '#666' as unknown as number
 
 	self.setFeedbackDefinitions({
 		componentState: {
@@ -159,7 +161,126 @@ export function UpdateFeedbacks(self: BallScoreBroadcastModuleInstance): void {
 				}
 			},
 		},
+		rosterPlayerSelectionState: {
+			name: 'Is roster player selected',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: orange,
+			},
+			options: [
+				{
+					id: 'team',
+					type: 'dropdown',
+					label: 'Select team',
+					choices: [
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
+					],
+					default: 'away',
+				},
+				{
+					id: 'rosterIndex',
+					type: 'number',
+					label: 'Roster index',
+					default: 1,
+					min: 1,
+					max: MAX_ROSTER,
+				},
+			],
+			callback: async (feedback) => {
+				return isRosterPlayerSelected(feedback.options)
+			},
+		},
+		rosterPlayerOnAirState: {
+			name: 'Is roster player on air',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: red,
+			},
+			options: [
+				{
+					id: 'team',
+					type: 'dropdown',
+					label: 'Select team',
+					choices: [
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
+					],
+					default: 'away',
+				},
+				{
+					id: 'rosterIndex',
+					type: 'number',
+					label: 'Roster index',
+					default: 1,
+					min: 1,
+					max: MAX_ROSTER,
+				},
+			],
+			callback: async (feedback) => {
+				try {
+					return (
+						isRosterPlayerSelected(feedback.options) &&
+						self.data?.controls?.find((control: any) => control.component === 'lowerThird')?.action === 'on'
+					)
+				} catch (error: any) {
+					self.log('error', `Error getting roster player on air state: ${error?.message}`)
+					return false
+				}
+			},
+		},
+		rosterAppearedState: {
+			name: 'Has roster player entered the game',
+			type: 'boolean',
+			defaultStyle: {
+				color: dim,
+			},
+			options: [
+				{
+					id: 'team',
+					type: 'dropdown',
+					label: 'Select team',
+					choices: [
+						{ id: 'away', label: 'Away' },
+						{ id: 'home', label: 'Home' },
+					],
+					default: 'away',
+				},
+				{
+					id: 'rosterIndex',
+					type: 'number',
+					label: 'Roster index',
+					default: 1,
+					min: 1,
+					max: MAX_ROSTER,
+				},
+			],
+			callback: async (feedback) => {
+				try {
+					return rosterPlayerAt(feedback.options)?.appeared ?? false
+				} catch (error: any) {
+					self.log('error', `Error getting roster appeared state: ${error?.message}`)
+					return false
+				}
+			},
+		},
 	})
+
+	function rosterPlayerAt(feedBackOptions: CompanionOptionValues) {
+		const index: number = feedBackOptions.rosterIndex ? Number(feedBackOptions.rosterIndex) - 1 : 0
+		const roster = feedBackOptions.team === 'away' ? self.data?.awayRoster : self.data?.homeRoster
+		return roster?.[index]
+	}
+
+	function isRosterPlayerSelected(feedBackOptions: CompanionOptionValues): boolean {
+		try {
+			const player = rosterPlayerAt(feedBackOptions)
+			return !!player?.guid && player.guid === self.data?.lowerThird?.guid
+		} catch (error: any) {
+			self.log('error', `Error getting roster player state: ${error?.message}`)
+			return false
+		}
+	}
 
 	function isPlayerSelected(feedBackOptions: CompanionOptionValues): boolean {
 		try {

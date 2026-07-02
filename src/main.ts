@@ -1,6 +1,6 @@
 import { InstanceBase, InstanceStatus, runEntrypoint, SomeCompanionConfigField } from '@companion-module/base'
 import { GetConfigFields, type BallScoreBroadcastModuleConfig } from './config.js'
-import { updateLineupAndPitchersVariables, UpdateVariableDefinitions } from './variables.js'
+import { updateLineupAndPitchersVariables, updateRosterVariables, UpdateVariableDefinitions } from './variables.js'
 import { UpgradeScripts } from './upgrades.js'
 import { UpdateActions } from './actions.js'
 import { UpdateFeedbacks } from './feedbacks.js'
@@ -75,8 +75,17 @@ export class BallScoreBroadcastModuleInstance extends InstanceBase<BallScoreBroa
 				UpdatePresetDefinitions(this)
 			}
 
-			this.checkFeedbacks('batterState', 'playerSelectionState', 'playerOnAirState', 'componentState')
+			this.checkFeedbacks(
+				'batterState',
+				'playerSelectionState',
+				'playerOnAirState',
+				'componentState',
+				'rosterPlayerSelectionState',
+				'rosterPlayerOnAirState',
+				'rosterAppearedState',
+			)
 			updateLineupAndPitchersVariables(this)
+			updateRosterVariables(this)
 		} catch (error: any) {
 			this.consecutiveFailures++
 			this.log('error', `Error getting companion data: ${error?.message}`)
