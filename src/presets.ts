@@ -1,6 +1,6 @@
 import { CompanionPresetDefinitions } from '@companion-module/base'
 import type { BallScoreBroadcastModuleInstance } from './main.js'
-import { Control } from './api-service.js'
+import { Control, MAX_ROSTER } from './api-service.js'
 
 export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance): void {
 	const presets: CompanionPresetDefinitions = {}
@@ -178,6 +178,76 @@ export function UpdatePresetDefinitions(self: BallScoreBroadcastModuleInstance):
 					up: [],
 				},
 			],
+		}
+	}
+
+	// Presets for selecting any player/coach from the full team roster
+	fillPresetsWithRoster(true)
+	fillPresetsWithRoster(false)
+
+	function fillPresetsWithRoster(away: boolean): void {
+		const team: string = away ? 'away' : 'home'
+		for (let i = 1; i <= MAX_ROSTER; i++) {
+			presets[`select_${team}_roster_${i}`] = {
+				type: 'button',
+				category: `Roster Selection (${away ? 'Away' : 'Home'})`,
+				name: `Roster ${i}`,
+				style: {
+					text: `$(ballscore-broadcast:${team}RosterLabel${i})`,
+					size: '18',
+					alignment: 'left:top',
+					show_topbar: false,
+					color: away ? white : black,
+					bgcolor: away ? black : white,
+				},
+				feedbacks: [
+					{
+						// Dim players who have already entered the game.
+						feedbackId: 'rosterAppearedState',
+						options: {
+							team: team,
+							rosterIndex: i,
+						},
+						style: {
+							color: '#666' as unknown as number,
+						},
+					},
+					{
+						feedbackId: 'rosterPlayerSelectionState',
+						options: {
+							team: team,
+							rosterIndex: i,
+						},
+						style: {
+							bgcolor: orange,
+						},
+					},
+					{
+						feedbackId: 'rosterPlayerOnAirState',
+						options: {
+							team: team,
+							rosterIndex: i,
+						},
+						style: {
+							bgcolor: red,
+						},
+					},
+				],
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'select_from_roster',
+								options: {
+									team: team,
+									num: i,
+								},
+							},
+						],
+						up: [],
+					},
+				],
+			}
 		}
 	}
 

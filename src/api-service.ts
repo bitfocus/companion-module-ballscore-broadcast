@@ -3,6 +3,10 @@ import axios from 'axios'
 
 export const DEFAULT_TIMEOUT_MS = 4000
 
+// Number of roster-selection button slots generated per team. Covers realistic
+// rosters (players + coaches); overflow simply spans multiple Companion pages.
+export const MAX_ROSTER = 40
+
 export class ApiService {
 	private readonly secretKey: string
 	private readonly baseUrl: string | undefined
@@ -70,6 +74,10 @@ export class ApiService {
 		if (!response?.data || !Array.isArray(response.data.controls)) {
 			throw new Error('Malformed companion data from API!')
 		}
+		// Roster arrays are optional on the wire (older server builds omit them);
+		// normalise to empty arrays so consumers can index them safely.
+		if (!Array.isArray(response.data.awayRoster)) response.data.awayRoster = []
+		if (!Array.isArray(response.data.homeRoster)) response.data.homeRoster = []
 		return response.data
 	}
 }
@@ -82,6 +90,8 @@ export interface BroadcastCompanionData {
 	awayPitcher?: Player
 	homePitcher?: Player
 	lowerThird?: Player
+	awayRoster: Player[]
+	homeRoster: Player[]
 	controls: Control[]
 }
 
@@ -90,6 +100,9 @@ export interface Player {
 	guid?: string
 	number?: number
 	isUp: boolean
+	// Roster-only flags (present on awayRoster/homeRoster entries).
+	isCoach?: boolean
+	appeared?: boolean
 }
 
 export interface Control {

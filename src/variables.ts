@@ -1,5 +1,6 @@
 import type { BallScoreBroadcastModuleInstance } from './main.js'
 import type { CompanionVariableValues } from '@companion-module/base'
+import { MAX_ROSTER, type Player } from './api-service.js'
 
 export function UpdateVariableDefinitions(self: BallScoreBroadcastModuleInstance): void {
 	const variables = []
@@ -15,6 +16,16 @@ export function UpdateVariableDefinitions(self: BallScoreBroadcastModuleInstance
 			{ variableId: `homeLineupNumber${i}`, name: `Home Lineup Number ${i}` },
 			{ variableId: `homeLineupName${i}`, name: `Home Lineup Name ${i}` },
 			{ variableId: `homeLineupLabel${i}`, name: `Away Lineup Button Label ${i}` },
+		)
+	}
+	for (let i = 1; i <= MAX_ROSTER; i++) {
+		variables.push(
+			{ variableId: `awayRosterNumber${i}`, name: `Away Roster Number ${i}` },
+			{ variableId: `awayRosterName${i}`, name: `Away Roster Name ${i}` },
+			{ variableId: `awayRosterLabel${i}`, name: `Away Roster Button Label ${i}` },
+			{ variableId: `homeRosterNumber${i}`, name: `Home Roster Number ${i}` },
+			{ variableId: `homeRosterName${i}`, name: `Home Roster Name ${i}` },
+			{ variableId: `homeRosterLabel${i}`, name: `Home Roster Button Label ${i}` },
 		)
 	}
 	variables.push(
@@ -81,5 +92,42 @@ export function updateLineupAndPitchersVariables(self: BallScoreBroadcastModuleI
 			`P:    #${self.data.homePitcher?.number}\n${self.data.homePitcher?.name.toUpperCase()}`
 	}
 
+	self.setVariableValues(updates)
+}
+
+// Formats a single roster button label: "#<num>\n<NAME>" for numbered players,
+// "C  <NAME>" for coaches/staff, plain "<NAME>" otherwise.
+function rosterLabel(player: Player): string {
+	const name: string = (player.name ?? '').toUpperCase()
+	if (player.number) {
+		return `#${player.number}\n${name}`
+	}
+	if (player.isCoach) {
+		return `C\n${name}`
+	}
+	return name
+}
+
+export function updateRosterVariables(self: BallScoreBroadcastModuleInstance): void {
+	const updates: CompanionVariableValues = {}
+	// Clear every slot first so leftover players don't linger when a roster shrinks.
+	for (let i = 1; i <= MAX_ROSTER; i++) {
+		updates[`awayRosterNumber${i}`] = ''
+		updates[`awayRosterName${i}`] = ''
+		updates[`awayRosterLabel${i}`] = ''
+		updates[`homeRosterNumber${i}`] = ''
+		updates[`homeRosterName${i}`] = ''
+		updates[`homeRosterLabel${i}`] = ''
+	}
+	self.data.awayRoster?.slice(0, MAX_ROSTER).forEach((player, index) => {
+		updates[`awayRosterNumber${index + 1}`] = player.number ?? ''
+		updates[`awayRosterName${index + 1}`] = player.name
+		updates[`awayRosterLabel${index + 1}`] = rosterLabel(player)
+	})
+	self.data.homeRoster?.slice(0, MAX_ROSTER).forEach((player, index) => {
+		updates[`homeRosterNumber${index + 1}`] = player.number ?? ''
+		updates[`homeRosterName${index + 1}`] = player.name
+		updates[`homeRosterLabel${index + 1}`] = rosterLabel(player)
+	})
 	self.setVariableValues(updates)
 }
