@@ -1,9 +1,15 @@
 import { type SomeCompanionConfigField } from '@companion-module/base'
 
+// Kept below the active poll period (see ACTIVE_POLL_MS in main.ts) so a stalled
+// request can never overlap the next tick.
+export const DEFAULT_TIMEOUT_MS = 4000
+
 export interface BallScoreBroadcastModuleConfig {
 	secretKey: string
 	environment: string
-	timeout?: number
+	// Always present: new instances get the field default, existing ones are
+	// backfilled by the upgrade script in upgrades.ts.
+	timeout: number
 }
 
 export function GetConfigFields(): SomeCompanionConfigField[] {
@@ -36,7 +42,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			width: 8,
 			min: 500,
 			max: 30000,
-			default: 4000,
+			default: DEFAULT_TIMEOUT_MS,
 		},
 	]
 }
