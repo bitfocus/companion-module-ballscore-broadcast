@@ -1,7 +1,5 @@
-import { BallScoreBroadcastModuleConfig } from './config.js'
+import { BallScoreBroadcastModuleConfig, DEFAULT_TIMEOUT_MS } from './config.js'
 import axios from 'axios'
-
-export const DEFAULT_TIMEOUT_MS = 4000
 
 // Number of roster-selection button slots generated per team. Covers realistic
 // rosters (players + coaches); overflow simply spans multiple Companion pages.
